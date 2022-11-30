@@ -7,13 +7,13 @@ public abstract class GameParent {
     public int pointX;
     public int pointY;
     //interface
-    public GamePannel gamePannel;
+    public GamePanel gamePanel;
 
-    public GameParent(String image, int pointX, int pointY, GamePannel gamePannel) {
+    public GameParent(String image, int pointX, int pointY, GamePanel gamePanel) {
         this.image = Toolkit.getDefaultToolkit().getImage(image);
         this.pointX = pointX;
         this.pointY = pointY;
-        this.gamePannel = gamePannel;
+        this.gamePanel = gamePanel;
     }
 
     public abstract void paintSelf(Graphics graphics);

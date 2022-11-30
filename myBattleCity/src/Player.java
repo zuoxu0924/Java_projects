@@ -1,15 +1,14 @@
 import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.security.Key;
 
 public class Player extends Tank {
     private boolean up = false;
     private boolean left = false;
     private boolean right = false;
     private boolean down = false;
-    public Player(String image, int pointX, int pointY, GamePannel gamePannel,
+    public Player(String image, int pointX, int pointY, GamePanel gamePanel,
                   String upImg, String leftImg, String rightImg, String downImg) {
-        super(image, pointX, pointY, gamePannel, upImg, leftImg, rightImg, downImg);
+        super(image, pointX, pointY, gamePanel, upImg, leftImg, rightImg, downImg);
     }
 
     /*
@@ -43,20 +42,12 @@ public class Player extends Tank {
     public void keyReleased(KeyEvent keyEvent) {
         int key = keyEvent.getKeyCode();
         switch (key) {
-            case KeyEvent.VK_UP:
-                up = false;
-                break;
-            case KeyEvent.VK_LEFT:
-                left = false;
-                break;
-            case KeyEvent.VK_RIGHT:
-                right = false;
-                break;
-            case KeyEvent.VK_DOWN:
-                down = false;
-                break;
-            default:
-                break;
+            case KeyEvent.VK_UP -> up = false;
+            case KeyEvent.VK_LEFT -> left = false;
+            case KeyEvent.VK_RIGHT -> right = false;
+            case KeyEvent.VK_DOWN -> down = false;
+            default -> {
+            }
         }
     }
 
