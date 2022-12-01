@@ -6,7 +6,7 @@ public abstract class Tank extends GameParent{
     public int tankWidth = 32;
     public int tankHeight = 32;
     //speed
-    public int speed = 3;
+    public int speed = 2;
     //生命变量
     public boolean alive = false;
     //direction
@@ -19,10 +19,10 @@ public abstract class Tank extends GameParent{
 
     /*
      * 规范化游戏，添加新规则->攻击冷却时间
-     * tank不能连续不停地发射子弹，时间间隔为500ms
+     * tank不能连续不停地发射子弹，时间间隔为800ms
      */
     private boolean fireCoolDown = true;
-    private int fireInterval = 500;
+    private int fireInterval = 800;
 
     public Tank(String image, int pointX, int pointY, GamePanel gamePanel,
                 String upImg, String leftImg, String rightImg, String downImg) {
@@ -38,7 +38,7 @@ public abstract class Tank extends GameParent{
     public void tankUpWard() {
         setImage(upImg);
         direction = Direction.UP;
-        if(!tankHitWall(pointX, pointY - speed) && !reachBorder(pointX, pointY - speed)) {
+        if(!tankHitWall(pointX, pointY - speed) && !reachBorder(pointX, pointY - speed) && !tankHitBase(pointX, pointY - speed)) {
             pointY -= speed;
         }
     }
@@ -46,7 +46,7 @@ public abstract class Tank extends GameParent{
     public void tankLeftWard() {
         setImage(leftImg);
         direction = Direction.LEFT;
-        if(!tankHitWall(pointX - speed, pointY) && !reachBorder(pointX - speed, pointY)) {
+        if(!tankHitWall(pointX - speed, pointY) && !reachBorder(pointX - speed, pointY) && !tankHitBase(pointX - speed, pointY)) {
             pointX -= speed;
         }
     }
@@ -54,7 +54,7 @@ public abstract class Tank extends GameParent{
     public void tankRightWard() {
         setImage(rightImg);
         direction = Direction.RIGHT;
-        if(!tankHitWall(pointX + speed, pointY) && !reachBorder(pointX + speed, pointY)) {
+        if(!tankHitWall(pointX + speed, pointY) && !reachBorder(pointX + speed, pointY) && !tankHitBase(pointX + speed, pointY)) {
             pointX += speed;
         }
     }
@@ -62,7 +62,7 @@ public abstract class Tank extends GameParent{
     public void tankDownWard() {
         setImage(downImg);
         direction = Direction.DOWN;
-        if(!tankHitWall(pointX, pointY + speed) && !reachBorder(pointX, pointY + speed)) {
+        if(!tankHitWall(pointX, pointY + speed) && !reachBorder(pointX, pointY + speed) && !tankHitBase(pointX, pointY + speed)) {
             pointY += speed;
         }
     }
@@ -112,7 +112,7 @@ public abstract class Tank extends GameParent{
                 e.printStackTrace();
             }
             fireCoolDown = true;
-            this.stop();
+            //this.stop();
         }
     }
 
@@ -135,6 +135,18 @@ public abstract class Tank extends GameParent{
         Rectangle next = new Rectangle(x, y, tankWidth, tankHeight);
         for(Wall wall : borderArrayList) {
             if(next.intersects(wall.getRec())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    //坦克不能直接穿过基地
+    public boolean tankHitBase(int x, int y) {
+        ArrayList<Base> baseArrayList = this.gamePanel.baseArrayList;
+        Rectangle next = new Rectangle(x, y, tankWidth, tankHeight);
+        for(Base base : baseArrayList) {
+            if(next.intersects(base.getRec())) {
                 return true;
             }
         }

@@ -8,7 +8,6 @@ import java.util.Random;
 public class GamePanel extends JFrame {
     int winWidth = 650;
     int winHeight = 450;
-    Image select = Toolkit.getDefaultToolkit().getImage("images/myTank/my-r.png");
     //双缓存图片解决屏幕闪烁问题
     Image offScreenImage = null;
     /*
@@ -17,6 +16,7 @@ public class GamePanel extends JFrame {
      * state: 1, 游戏开始;
      * state: 2, 游戏失败;
      * state: 3, 游戏胜利;
+     * state: 4, 退出游戏
      */
     int state = 0;
     //控制添加敌军的速递
@@ -65,7 +65,7 @@ public class GamePanel extends JFrame {
     //添加爆炸元素列表
     ArrayList<Explode> explodeArrayList = new ArrayList<>();
     //定义玩家tank, 初始位置: x - 125, y - 390
-    Player player = new Player("images/myTank/my-u.png", 125, 390, this,
+    Player player = new Player("images/myTank/my-u.png", 200, 390, this,
             "images/myTank/my-u.png", "images/myTank/my-l.png",
             "images/myTank/my-r.png", "images/myTank/my-d.png");
     //添加基地
@@ -133,6 +133,7 @@ public class GamePanel extends JFrame {
         baseArrayList.add(base);
 
         while (true) {
+            if(state == 4) break;
             //游戏胜利判定
             if(baseArrayList.size() > 0 && enemyCount == 5 && enemyArrayList.size() == 0) {
                 state = 3;
@@ -154,13 +155,13 @@ public class GamePanel extends JFrame {
                 //添加敌军
                 enemyArrayList.add(new Enemy(img, enemyPositionX[enemyCount], enemyPositionY[enemyCount], this,
                         "images/enemyTank/enemy-u.png", "images/enemyTank/enemy-l.png",
-                        "images/enemyTank/enemy-r.png", "images/enemyTank/enemy-d.png"));
+                        "images/enemyTank/enemy-r.png", "images/enemyTank/enemy-d.png", enemyCount % 2));
                 enemyCount++;
             }
             repaint();
             pCount++;
             try {
-                Thread.sleep(50);
+                Thread.sleep(25);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -190,13 +191,15 @@ public class GamePanel extends JFrame {
             gImage.drawString("JAVA 2022Fall坦克大战", 160, 350);
             gImage.setColor(Color.PINK);
             gImage.setFont(new Font("微软雅黑", Font.PLAIN, 20));
-            gImage.drawString("按enter键开始游戏", 250, 400);
+            gImage.drawString("按enter键开始游戏", 250, 390);
             gImage.setColor(Color.LIGHT_GRAY);
             gImage.setFont(new Font("微软雅黑", Font.PLAIN, 15));
             gImage.drawString("课程项目版权所有@左旭, 2020141010097", 195, 430);
         } else if (state == 1) {
-            //gImage.drawString("Hello", 300, 400);
             gImage.drawImage(backgroundImg, 0, 0, null);
+            gImage.setColor(Color.RED);
+            gImage.setFont(new Font("微软雅黑", Font.BOLD, 15));
+            gImage.drawString("剩余敌人数量: " + enemyArrayList.size(), 25, this.getHeight() - 30);
             //添加边框
             for(Wall wall : borderWallList) {
                 wall.paintSelf(gImage);
@@ -205,7 +208,6 @@ public class GamePanel extends JFrame {
             for (Tank player : playerList) {
                 player.paintSelf(gImage);
             }
-//            player.paintSelf(gImage);
             //添加子弹
             for (Bullet bullet : bulletArrayList) {
                 bullet.paintSelf(gImage);
@@ -227,12 +229,25 @@ public class GamePanel extends JFrame {
             for (Base base : baseArrayList) {
                 base.paintSelf(gImage);
             }
-            //pCount++;
+
         } else if (state == 2) {
             Image gameoverImg = Toolkit.getDefaultToolkit().getImage("images/utils/gameover.png");
             gImage.drawImage(gameoverImg, 0, 0, null);
+            gImage.setColor(Color.PINK);
+            gImage.setFont(new Font("微软雅黑", Font.PLAIN, 20));
+            gImage.drawString("按shift + Q键退出游戏", 235, 390);
+            gImage.setColor(Color.LIGHT_GRAY);
+            gImage.setFont(new Font("微软雅黑", Font.PLAIN, 15));
+            gImage.drawString("课程项目版权所有@左旭, 2020141010097", 195, 430);
         } else if (state == 3) {
-            gImage.drawString("Victory!", 280, 200);
+            Image victoryImg = Toolkit.getDefaultToolkit().getImage("images/utils/victory.png");
+            gImage.drawImage(victoryImg, 125, 25, null);
+            gImage.setColor(Color.PINK);
+            gImage.setFont(new Font("微软雅黑", Font.PLAIN, 20));
+            gImage.drawString("按shift + Q键退出游戏", 235, 390);
+            gImage.setColor(Color.LIGHT_GRAY);
+            gImage.setFont(new Font("微软雅黑", Font.PLAIN, 15));
+            gImage.drawString("课程项目版权所有@左旭, 2020141010097", 195, 430);
         }
         //将图片加载到窗口中
         graphics.drawImage(offScreenImage, 0, 0, null);
@@ -242,12 +257,12 @@ public class GamePanel extends JFrame {
     class KeyMonitor extends KeyAdapter {
         @Override
         public void keyPressed(KeyEvent keyEvent) {
-            //System.out.println(keyEvent.getKeyChar());
-            int key = keyEvent.getKeyCode();
-            if (key == KeyEvent.VK_ENTER) {
+            if (keyEvent.getKeyCode() == KeyEvent.VK_ENTER) {
                 playerList.add(player);
                 player.alive = true;
                 state = 1;
+            } else if (keyEvent.isShiftDown() && keyEvent.getKeyCode() == KeyEvent.VK_Q) {
+                state = 4;
             } else {
                 player.keyPressed(keyEvent);
             }
@@ -262,6 +277,7 @@ public class GamePanel extends JFrame {
     public static void main(String[] args) {
         GamePanel winOfBattleCity = new GamePanel();
         winOfBattleCity.loadPanel();
+        winOfBattleCity.dispose();
     }
 
 

@@ -41,6 +41,8 @@ public class Bullet extends GameParent {
         }
         this.hitWall();
         this.hitBorderWall();
+        //玩家的子弹不能摧毁自己的基地
+        this.playerHitBase();
         this.outOfBorder();
     }
 
@@ -74,6 +76,16 @@ public class Bullet extends GameParent {
         ArrayList<Wall> borderWallList = this.gamePanel.borderWallList;
         for(Wall wall : borderWallList) {
             if(this.getRec().intersects(wall.getRec())) {
+                this.gamePanel.removeBulletList.add(this);
+                break;
+            }
+        }
+    }
+
+    public void playerHitBase() {
+        ArrayList<Base> baseArrayList = this.gamePanel.baseArrayList;
+        for(Base base : baseArrayList) {
+            if(this.getRec().intersects(base.getRec())) {
                 this.gamePanel.removeBulletList.add(this);
                 break;
             }
